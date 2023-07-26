@@ -10,12 +10,24 @@
 </head>
 <body>
     
-    <py-script>
-        from datetime import datetime
-        now = datetime.now()
-        print(f"今は{now:%Y年%m月%d日 %H:%M:%S}です。")
-      </py-script>
-
+    <py-config>
+        packages = ["requests", "pyodide-http"]
+      </py-config>
+      <py-script>
+        import requests
+        import pyodide_http
+  
+        <!-- # Requestsにパッチをあてる -->
+        pyodide_http.patch_all()  
+        
+        response = requests.get("https://swapi.dev/api/films/1/")
+        data = response.json()
+        display(f"タイトル: {data['title']}")
+        display(f"公開日: {data['release_date']}")
+        for character_url in data["characters"][:5]:
+            response = requests.get(character_url)
+            display(response.json()["name"])
+      </py-sctip>
 
 </body>
 </html>
