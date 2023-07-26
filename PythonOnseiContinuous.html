@@ -11,23 +11,48 @@
 <body>
     
     <py-config>
-        packages = ["requests", "pyodide-http"]
-      </py-config>
-      <py-script>
-        import requests
-        import pyodide_http
-  
-        <!-- # Requestsにパッチをあてる -->
-        pyodide_http.patch_all()  
-        
-        response = requests.get("https://swapi.dev/api/films/1/")
-        data = response.json()
-        display(f"タイトル: {data['title']}")
-        display(f"公開日: {data['release_date']}")
-        for character_url in data["characters"][:5]:
-            response = requests.get(character_url)
-            display(response.json()["name"])
-      </py-script>
-
+        packages = ["microsoft-cognitiveservices-speech-sdk"]
+    </py-config>
+    
+    <py-script>
+        import azure.cognitiveservices.speech as speechsdk
+    
+        speech_config = speechsdk.SpeechConfig(subscription="57e496fdf3194af28e5f41762c1b925e", region="japaneast")
+        speech_config.speech_recognition_language = "ja-JP"
+    
+        def from_mic():
+            speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+    
+            print("Speak into your microphone.")
+            result = speech_recognizer.recognize_once_async().get()
+            print(result.text)
+    
+        from_mic()
+    
+        <!-- audio_config = speechsdk.audio.AudioConfig(filename=weatherfilename) -->
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+    
+        done = False
+    
+        def stop_cb(evt):
+            print('CLOSING on {}'.format(evt))
+            speech_recognizer.stop_continuous_recognition()
+            nonlocal done
+            done = True
+    
+        speech_recognizer.recognizing.connect(lambda evt: print('RECOGNIZING: {}'.format(evt)))
+        speech_recognizer.recognized.connect(lambda evt: print('RECOGNIZED: {}'.format(evt)))
+        speech_recognizer.session_started.connect(lambda evt: print('SESSION STARTED: {}'.format(evt)))
+        speech_recognizer.session_stopped.connect(lambda evt: print('SESSION STOPPED {}'.format(evt)))
+        speech_recognizer.canceled.connect(lambda evt: print('CANCELED {}'.format(evt)))
+    
+        speech_recognizer.session_stopped.connect(stop_cb)
+        speech_recognizer.canceled.connect(stop_cb)
+    
+        speech_recognizer.start_continuous_recognition()
+        while not done:
+            time.sleep(.5)
+    </py-script>
+    
 </body>
 </html>

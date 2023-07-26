@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <title>Document</title>
+</head>
+<body>
+    
+    <py-config>
+        packages = ["requests", "pyodide-http"]
+      </py-config>
+      <py-script>
+        import requests
+        import pyodide_http
+  
+        <!-- # Requestsにパッチをあてる -->
+        pyodide_http.patch_all()  
+        
+        response = requests.get("https://swapi.dev/api/films/1/")
+        data = response.json()
+        display(f"タイトル: {data['title']}")
+        display(f"公開日: {data['release_date']}")
+        for character_url in data["characters"][:5]:
+            response = requests.get(character_url)
+            display(response.json()["name"])
+      </py-script>
+
+</body>
+</html>
