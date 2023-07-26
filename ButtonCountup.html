@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>カウントアップページ</title>
+</head>
+<body>
+  <h1>カウントアップページ</h1>
+  <p>カウント: <span id="counter">0</span></p>
+  <button id="countButton">カウントアップ</button>
+
+  <script>
+    // ページが読み込まれたときにカウントを復元する
+    window.onload = function() {
+      // ローカルストレージからカウンターの値を取得
+      const savedCount = localStorage.getItem('count');
+
+      // カウンターの値がnullでない場合、それをカウンターにセット
+      if (savedCount !== null) {
+        document.getElementById('counter').textContent = savedCount;
+      }
+    };
+
+    // カウントアップボタンのクリックイベントを追加
+    document.getElementById('countButton').addEventListener('click', function() {
+      // カウンターの値を取得
+      const currentCount = parseInt(document.getElementById('counter').textContent, 10);
+
+      // カウンターの値を1増やす
+      const newCount = currentCount + 1;
+
+      // カウンターの値を表示する
+      document.getElementById('counter').textContent = newCount;
+
+      // カウンターの値をローカルストレージに保存する
+      localStorage.setItem('count', newCount.toString());
+    });
+  </script>
+</body>
+</html>
