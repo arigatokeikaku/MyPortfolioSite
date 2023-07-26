@@ -17,10 +17,10 @@
     </py-config>
 
     <py-script>
-        import time
         import azure.cognitiveservices.speech as speechsdk
+        import time
 
-        speech_config = speechsdk.SpeechConfig(subscription="YourSpeechKey", region="YourSpeechRegion")
+        speech_config = speechsdk.SpeechConfig(subscription="57e496fdf3194af28e5f41762c1b925e", region="japaneast")
         speech_config.speech_recognition_language = "ja-JP"
 
         def from_mic():
@@ -32,9 +32,8 @@
 
         from_mic()
 
-        # Uncomment the following line and set the appropriate filename for the audio_config
-        # audio_config = speechsdk.audio.AudioConfig(filename=weatherfilename)
-        # speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+        audio_config = speechsdk.audio.AudioConfig(filename=weatherfilename)
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 
         done = False
 
@@ -53,9 +52,7 @@
         speech_recognizer.session_stopped.connect(stop_cb)
         speech_recognizer.canceled.connect(stop_cb)
 
-        # Uncomment the following line if using audio_config
-        # speech_recognizer.start_continuous_recognition()
-
+        speech_recognizer.start_continuous_recognition()
         while not done:
             time.sleep(.5)
     </py-script>
