@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>音声テキスト化システム</title>
+</head>
+<body>
+  <h1>音声テキスト化システム</h1>
+  <button id="startRecognition">音声認識を開始</button>
+  <p>テキスト化した結果: </p>
+  <div id="textResult"></div>
+
+  <script>
+    let recognition;
+    let textResult = '';
+    let count = 0;
+
+    // 音声認識を初期化
+    function initRecognition() {
+      recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+      recognition.lang = 'ja-JP'; // 認識言語を日本語に設定
+
+      // 認識終了時のイベント
+      recognition.onresult = function(event) {
+        // 認識結果を取得
+        const result = event.results[event.results.length - 1][0].transcript;
+
+        // 認識結果をテキストに追加
+        textResult += result + ' ';
+
+        // 「ありがとう」が出現する回数をカウント
+        count = (textResult.match(/ありがとう/g) || []).length;
+
+        // テキストを表示
+        document.getElementById('textResult').textContent = textResult;
+
+        // 音声認識を継続
+        recognition.start();
+      };
+    }
+
+    // 音声認識開始ボタンのクリックイベントを追加
+    document.getElementById('startRecognition').addEventListener('click', function() {
+      if (!recognition) {
+        // 音声認識を初期化
+        initRecognition();
+      }
+      // 音声認識を開始
+      recognition.start();
+    });
+  </script>
+  <!-- Google Cloud Speech-to-Text APIのスクリプト -->
+  <script src="https://www.google.com/recaptcha/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@google-cloud/speech@2.14.0/build/protos/protos.js"></script>
+</body>
+</html>
