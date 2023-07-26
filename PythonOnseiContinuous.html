@@ -13,15 +13,19 @@
 <body>
 
     <py-config>
-        packages = ["microsoft-cognitiveservices-speech-sdk"]
+        packages = []
+        sys.path.append("https://japaneast.api.cognitive.microsoft.com/sts/v1.0/issuetoken")  <!-- Azure Cognitive ServicesのPython SDKのパス -->
     </py-config>
 
     <py-script>
         import azure.cognitiveservices.speech as speechsdk
         import time
 
-        speech_config = speechsdk.SpeechConfig(subscription="57e496fdf3194af28e5f41762c1b925e", region="japaneast")
+        speech_config = speechsdk.SpeechConfig(subscription="YourSpeechKey", region="YourSpeechRegion")
         speech_config.speech_recognition_language = "ja-JP"
+
+        # 以下略（以前のコードの続き）
+
 
         def from_mic():
             speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
