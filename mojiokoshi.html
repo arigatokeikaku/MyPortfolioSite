@@ -12,36 +12,34 @@
     <div id="textResult"></div>
 
     <script>
-        // SpeechRecognitionオブジェクトを生成
         SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
 
         recognition.continuous = true; // 連続的な音声認識
         recognition.lang = 'ja-JP'; // 言語設定
+        recognition.interimResults = true; // 中間結果を取得
 
-        let lastResultIndex = 0; // 最後に処理したresultのインデックス
+        let accumulatedText = "";
 
         // 音声認識イベントのハンドラ
         recognition.addEventListener('result', (event) => {
-            let newText = "";
+            let currentText = "";
 
-            // 最後に処理したインデックスから新しい結果のみを処理
-            for (let i = lastResultIndex; i < event.results.length; ++i) {
+            // 最新の結果を処理
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                currentText += event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
-                    newText += event.results[i][0].transcript;
+                    accumulatedText += currentText;
+                    currentText = ""; // 最終結果の後に中間結果をクリア
                 }
             }
 
-            // 処理した結果のインデックスを更新
-            lastResultIndex = event.results.length;
-
-            // テキストを画面に表示
-            document.getElementById('textResult').textContent += newText;
+            // 画面にテキスト表示
+            document.getElementById('textResult').textContent = accumulatedText + currentText;
         });
 
         // 音声認識開始
         document.getElementById('startRecognition').addEventListener('click', function() {
-            lastResultIndex = 0; // インデックスをリセット
             recognition.start();
         });
 
