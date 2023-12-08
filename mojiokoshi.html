@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta viewport="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音声テキスト化システム</title>
 </head>
 <body>
@@ -12,35 +12,45 @@
     <div id="textResult"></div>
 
     <script>
+        // SpeechRecognitionオブジェクトを生成
         SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
 
         recognition.continuous = true; // 連続的な音声認識
-        recognition.lang = 'ja-JP'; // 言語を日本語に設定
-        recognition.interimResults = true; // 中間結果も取得
+        recognition.lang = 'ja-JP'; // 言語設定
 
         let accumulatedText = "";
 
+        // 音声認識イベントのハンドラ
         recognition.addEventListener('result', (event) => {
             let currentText = "";
+
+            // 最終的な結果のみを処理
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                currentText += event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    currentText += event.results[i][0].transcript;
+                }
             }
+
+            // 累積テキストに追加
             accumulatedText += currentText;
             document.getElementById('textResult').textContent = accumulatedText;
         });
 
+        // 音声認識開始
         document.getElementById('startRecognition').addEventListener('click', function() {
             recognition.start();
         });
 
+        // 音声認識が終了したら再開
         recognition.addEventListener('end', () => {
-            recognition.start(); // 音声認識を再度開始する
+            recognition.start();
         });
 
+        // 音声認識エラーのハンドリング
         recognition.addEventListener('error', (event) => {
             console.error('音声認識エラー:', event.error);
-            recognition.start(); // エラーが発生した場合、再度開始する
+            recognition.start(); // エラー発生時に再開
         });
     </script>
 </body>
