@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta viewport="width=device-width, initial-scale=1.0">
     <title>音声テキスト化システム</title>
 </head>
 <body>
@@ -12,37 +12,36 @@
     <div id="textResult"></div>
 
     <script>
-        // 1. SpeechRecognitionオブジェクトを生成する
         SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
-        recognition.continuous = true; // 連続的な音声認識を有効にする
 
-        // 累積されたテキストを保持する変数
+        recognition.continuous = true; // 連続的な音声認識
+        recognition.lang = 'ja-JP'; // 言語を日本語に設定
+        recognition.interimResults = true; // 中間結果も取得
+
         let accumulatedText = "";
 
-        // 2. イベントリスナーを登録する
         recognition.addEventListener('result', (event) => {
-            // このセッションでの認識されたテキストを取得
             let currentText = "";
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 currentText += event.results[i][0].transcript;
             }
-
-            // 累積テキストに追加
             accumulatedText += currentText;
             document.getElementById('textResult').textContent = accumulatedText;
         });
 
         document.getElementById('startRecognition').addEventListener('click', function() {
-            recognition.start(); // 音声認識を開始
+            recognition.start();
         });
 
         recognition.addEventListener('end', () => {
             recognition.start(); // 音声認識を再度開始する
         });
+
+        recognition.addEventListener('error', (event) => {
+            console.error('音声認識エラー:', event.error);
+            recognition.start(); // エラーが発生した場合、再度開始する
+        });
     </script>
-    <!-- Google Cloud Speech-to-Text APIのスクリプト -->
-    <!-- <script src="https://www.google.com/recaptcha/api.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@google-cloud/speech@2.14.0/build/protos/protos.js"></script> -->
 </body>
 </html>
