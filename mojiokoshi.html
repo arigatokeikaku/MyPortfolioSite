@@ -19,26 +19,29 @@
         recognition.continuous = true; // 連続的な音声認識
         recognition.lang = 'ja-JP'; // 言語設定
 
-        let accumulatedText = "";
+        let lastResultIndex = 0; // 最後に処理したresultのインデックス
 
         // 音声認識イベントのハンドラ
         recognition.addEventListener('result', (event) => {
-            let currentText = "";
+            let newText = "";
 
-            // 最終的な結果のみを処理
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
+            // 最後に処理したインデックスから新しい結果のみを処理
+            for (let i = lastResultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    currentText += event.results[i][0].transcript;
+                    newText += event.results[i][0].transcript;
                 }
             }
 
-            // 累積テキストに追加
-            accumulatedText += currentText;
-            document.getElementById('textResult').textContent = accumulatedText;
+            // 処理した結果のインデックスを更新
+            lastResultIndex = event.results.length;
+
+            // テキストを画面に表示
+            document.getElementById('textResult').textContent += newText;
         });
 
         // 音声認識開始
         document.getElementById('startRecognition').addEventListener('click', function() {
+            lastResultIndex = 0; // インデックスをリセット
             recognition.start();
         });
 
