@@ -15,13 +15,22 @@
         // 1. SpeechRecognitionオブジェクトを生成する
         SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
+        recognition.continuous = true; // 連続的な音声認識を有効にする
+
+        // 累積されたテキストを保持する変数
+        let accumulatedText = "";
 
         // 2. イベントリスナーを登録する
         recognition.addEventListener('result', (event) => {
-            const transcript = event.results[0][0].transcript;
-            console.log(transcript);
-            const textResultDiv = document.getElementById('textResult');
-            textResultDiv.textContent += transcript + ' '; // 既存のテキストに新しいテキストを追加
+            // このセッションでの認識されたテキストを取得
+            let currentText = "";
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                currentText += event.results[i][0].transcript;
+            }
+
+            // 累積テキストに追加
+            accumulatedText += currentText;
+            document.getElementById('textResult').textContent = accumulatedText;
         });
 
         document.getElementById('startRecognition').addEventListener('click', function() {
