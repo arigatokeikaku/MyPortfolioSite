@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声テキスト化システム</title>
+</head>
+<body>
+    <h1>音声テキスト化システム</h1>
+    <button id="startRecognition">音声認識を開始</button>
+    <p>テキスト化した結果: </p>
+    <div id="textResult"></div>
+
+    <script>
+        // 1. SpeechRecognitionオブジェクトを生成する
+        SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        // 2. イベントリスナーを登録する
+        recognition.addEventListener('result', (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log(transcript);
+            const textResultDiv = document.getElementById('textResult');
+            textResultDiv.textContent += transcript + ' '; // 既存のテキストに新しいテキストを追加
+        });
+
+        document.getElementById('startRecognition').addEventListener('click', function() {
+            recognition.start(); // 音声認識を開始
+        });
+
+        recognition.addEventListener('end', () => {
+            recognition.start(); // 音声認識を再度開始する
+        });
+    </script>
+    <!-- Google Cloud Speech-to-Text APIのスクリプト -->
+    <!-- <script src="https://www.google.com/recaptcha/api.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@google-cloud/speech@2.14.0/build/protos/protos.js"></script> -->
+</body>
+</html>
